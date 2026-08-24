@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Introduction Quiz</title>
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(18, 26, 44, 0.9);
+      --accent-cyan: #00f3ff;
+      --accent-green: #00ff66;
+      --accent-red: #ff3366;
+      --text-main: #e2e8f0;
+      --text-dim: #94a3b8;
+      --border-color: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.08), transparent 50%),
+        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 30px 30px, 30px 30px;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      width: 100%;
+      max-width: 850px;
+      background: var(--card-bg);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 243, 255, 0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      padding: 30px;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+
+    .terminal-title {
+      font-family: monospace;
+      color: var(--accent-cyan);
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .score-badge {
+      background: rgba(0, 243, 255, 0.1);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      padding: 14px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .option-card:hover:not(.disabled) {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 243, 255, 0.05);
+    }
+
+    .option-card.selected {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 243, 255, 0.1);
+    }
+
+    .option-card.correct {
+      border-color: var(--accent-green) !important;
+      background: rgba(0, 255, 102, 0.15) !important;
+      color: #fff;
+    }
+
+    .option-card.incorrect {
+      border-color: var(--accent-red) !important;
+      background: rgba(255, 51, 102, 0.15) !important;
+    }
+
+    .checkbox-indicator {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--text-dim);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .selected .checkbox-indicator {
+      border-color: var(--accent-cyan);
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    .explanation-box {
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: 0 8px 8px 0;
+      display: none;
+    }
+
+    .explanation-header {
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .explanation-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-dim);
+      white-space: pre-line;
+    }
+
+    .controls {
+      margin-top: 25px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .results-screen {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .results-title {
+      font-size: 2rem;
+      color: var(--accent-cyan);
+      margin-bottom: 15px;
+    }
+
+    .final-score {
+      font-size: 3.5rem;
+      font-weight: bold;
+      margin: 20px 0;
+      color: var(--accent-green);
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div id="quiz-ui">
+    <div class="quiz-header">
+      <div class="terminal-title">&gt; 1-Security Introduction Quiz</div>
+      <div class="score-badge" id="score-display">Score: 0</div>
+    </div>
+
+    <div class="question-box">
+      <div class="question-title" id="question-text">Loading question...</div>
+      <div class="options-grid" id="options-container"></div>
+    </div>
+
+    <div class="explanation-box" id="explanation-box">
+      <div class="explanation-header" id="status-title">Explanation</div>
+      <div class="explanation-text" id="explanation-text"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="action-btn" onclick="handleAction()">Check Answer</button>
+    </div>
+  </div>
+
+  <div id="results-ui" class="results-screen" style="display: none;">
+    <div class="results-title">ASSESSMENT COMPLETE</div>
+    <p style="color: var(--text-dim);">Your Final Score:</p>
+    <div class="final-score" id="final-score-text">0 / 10</div>
+    <button class="btn btn-primary" onclick="restartQuiz()">Retake Quiz</button>
+  </div>
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "Question 1\n\nYou are the Chief Information Security Officer (CISO) at a large corporation. You have been tasked with implementing a new security control to protect sensitive customer data.\nThe control must be able to automatically detect and prevent unauthorized access to the data.\nWhich type of control should you implement?",
+    options: ["A. Operational control", "B. Technical control", "C. Managerial control", "D. Physical control"],
+    correct: [1],
+    explanation: "Attack scale and velocity is the correct answer. It refers to the scale and speed of an attack, which can grow to millions of computers in a matter of minutes or days due to its ability to proliferate on the internet.\n\nSophisticated attacks are complex attacks that are difficult to detect and thwart. They use common internet tools and protocols, making it difficult to distinguish an attack from legitimate traffic. They also vary their behavior, making the same attack appear differently each time. However, this option does not specifically refer to the speed and scale of an attack.\n\nProliferation of attack software refers to the wide variety of attack tools available on the internet, allowing anyone with a moderate level of technical knowledge to download the tools and run an attack. While this can contribute to the scale and velocity of an attack, it is not the same thing.\n\nWhile data encryption is a crucial aspect of cybersecurity, it is not a security challenge. Instead, it is a method used to protect data from unauthorized access."
+  },
+  {
+    question: "Question 2\n\nYou are the head of the cybersecurity team at a large corporation. You notice an increase in network traffic that appears to be legitimate but is causing a slowdown in your systems.\nUpon further inspection, you find that the traffic patterns vary each time, making it difficult to distinguish from normal traffic.\nWhat type of security challenge are you MOST likely facing?",
+    options: ["A. Sophisticated attack", "B. Proliferation of attack software", "C. Data breach", "D. Attack scale and velocity"],
+    correct: [0],
+    explanation: "A sophisticated attack is the correct answer. Sophisticated attacks are complex and often use common internet tools and protocols, making them difficult to distinguish from legitimate traffic. They also vary their behavior, making the same attack appear differently each time, which aligns with the observed traffic patterns.\n\nProliferation of attack software refers to the wide availability of attack tools on the internet, which allows anyone with moderate technical knowledge to download the tools and run an attack. While this could potentially cause an increase in network traffic, it does not account for the varying traffic patterns observed.\n\nAttack scale and velocity refers to the rapid and widespread proliferation of an attack, often affecting a large number of computers in a short amount of time. While this could cause a slowdown in systems, it does not account for the varying traffic patterns observed.\n\nA data breach refers to an incident where information is accessed without authorization. While a data breach could potentially result from the security challenge faced, it does not in itself explain the varying traffic patterns observed."
+  },
+  {
+    question: "Question 3\n\nYou are the Chief Information Security Officer (CISO) at a large corporation. Your company is expanding rapidly and the complexity of managing security across different business functions is increasing.\nYou need a dedicated team to monitor and protect critical information assets across the organization.\nWhich of the following would be the MOST effective solution?",
+    options: ["A. Hiring more IT staff", "B. Establishing a Security Operations Center (SOC)", "C. Implementing a new security policy", "D. Outsourcing security to a third-party vendor"],
+    correct: [1],
+    explanation: "Establishing a Security Operations Center (SOC) is the correct answer. A SOC is a dedicated team that monitors and protects critical information assets across the organization. It provides resources and personnel to implement rapid incident detection and response, plus oversight of cybersecurity operations.\n\nWhile implementing a new security policy can help improve security, it does not provide the dedicated monitoring and protection needed for critical information assets across different business functions.\n\nWhile hiring more IT staff can help manage the increased workload, it does not provide the dedicated monitoring and protection needed for critical information assets across different business functions.\n\nWhile outsourcing can be a viable option for some organizations, it may not provide the same level of control and oversight as a dedicated internal team like a SOC."
+  },
+  {
+    question: "Question 4\n\nWhich of the following security challenges refers to the rapid and broad spread of an attack, often affecting a large number of computers in a relatively short amount of time?",
+    options: ["A. Sophisticated attacks", "B. Data encryption", "C. Attack scale and velocity", "D. Proliferation of attack software"],
+    correct: [2],
+    explanation: "Attack scale and velocity is the correct answer. It refers to the scale and speed of an attack, which can grow to millions of computers in a matter of minutes or days due to its ability to proliferate on the internet.\n\nSophisticated attacks are complex attacks that are difficult to detect and thwart. They use common internet tools and protocols, making it difficult to distinguish an attack from legitimate traffic. They also vary their behavior, making the same attack appear differently each time. However, this option does not specifically refer to the speed and scale of an attack.\n\nProliferation of attack software refers to the wide variety of attack tools available on the internet, allowing anyone with a moderate level of technical knowledge to download the tools and run an attack. While this can contribute to the scale and velocity of an attack, it is not the same thing.\n\nWhile data encryption is a crucial aspect of cybersecurity, it is not a security challenge. Instead, it is a method used to protect data from unauthorized access."
+  },
+  {
+    question: "Question 5\n\nWhich of the following is a method of implementing security controls?",
+    options: ["A. Financial controls", "B. Marketing controls", "C. Managerial controls", "D. Sales controls"],
+    correct: [2],
+    explanation: "Managerial controls is the correct answer. Managerial controls are administrative actions that define the organization's security posture through policy, guidelines, standards, procedures, and other forms of documentation. They provide a framework for operation and are essential for the organization's security program.\n\nWhile financial controls are important in a business context, they are not a method of implementing security controls. Financial controls manage the accuracy and reliability of financial transactions and reporting, not the security of an organization's information systems.\n\nMarketing controls are not a method of implementing security controls. They are methods used by marketing departments to analyze and measure their strategies and campaigns, not to secure an organization's information systems.\n\nSales controls are not a method of implementing security controls. They are methods used by sales departments to manage and track sales activities, not to secure an organization's information systems."
+  },
+  {
+    question: "Question 6\n\nYour computer system is a participant in an asymmetric cryptography system. You've created a message to send to another user. Before transmission, you hash the message and encrypt the hash using your private key. You then attach this encrypted hash to your message as a digital signature before sending it to the other user.\nIn this example, which protection does the hashing activity provide?",
+    options: ["A. Confidentiality", "B. Availability", "C. Non-repudiation", "D. Integrity"],
+    correct: [3],
+    explanation: "Hashing of any sort, including within a digital signature, provides data integrity.\nSigning the message with the private key creates non-repudiation.\nA digital signature activity, as a whole, does not provide protection for confidentiality because the original message is sent in cleartext.\nNo form of cryptography provides protection for availability."
+  },
+  {
+    question: "Question 7\n\nYou are the Chief Information Security Officer (CISO) at a tech company. Your company is facing issues with silos between the development and operations teams, leading to inefficiencies and security vulnerabilities.\nWhich approach should you adopt to encourage collaboration and integrate security considerations at every stage of software development and deployment?",
+    options: ["A. Implementing a new security policy", "B. Establishing a Security Operations Center (SOC)", "C. Outsourcing security to a third-party vendor", "D. Adopting a Development and Operations (DevOps) approach"],
+    correct: [3],
+    explanation: "Adopting a Development and Operations (DevOps) approach is the correct answer. The DevOps approach encourages collaboration between developers and systems administrators, integrating security considerations at every stage of software development and deployment. This can help break down silos and improve both efficiency and security.\n\nWhile implementing a new security policy can help improve security, it does not directly address the issue of silos between the development and operations teams.\n\nA Security Operations Center (SOC) is a dedicated team that monitors and protects critical information assets across the organization. However, it does not directly address the issue of silos between the development and operations teams.\n\nWhile outsourcing can be a viable option for some organizations, it does not directly address the issue of silos between the development and operations teams. Furthermore, it may not provide the same level of control and oversight as an integrated internal team."
+  },
+  {
+    question: "Question 8\n\nA user copies files from her desktop computer to a USB flash device and puts the device into her pocket.\nWhich of the following security risks is MOST pressing?",
+    options: ["A. Non-repudiation", "B. Confidentiality", "C. Availability", "D. Integrity"],
+    correct: [1],
+    explanation: "Confidentiality ensures that data is not disclosed to unintended persons. Removable media poses a big threat to confidentiality because it makes it easy to remove data and share it with unauthorized users.\n\nAvailability ensures that data is available when it is needed. Copying files to a server that includes malware could threaten the data's availability if the malware deletes or corrupts the data.\n\nIntegrity ensures that data is not modified or tampered with.\n\nNon-repudiation provides validation of a message's origin."
+  },
+  {
+    question: "Question 9\n\nA large multinational corporation has recently experienced a significant data breach. The breach was detected by an external cybersecurity firm, and the corporation's IT department was unable to prevent or detect the breach in its early stages.\nThe CEO wants to ensure that such a breach does not happen again and is considering several options to enhance the company's security posture.\nWhich of the following options would be the MOST effective in preventing and detecting future data breaches?",
+    options: ["A. Hiring an external cybersecurity firm to conduct regular penetration testing.", "B. Increasing the budget for the IT department to purchase more advanced security software.", "C. Implementing a dedicated Computer Incident Response Team (CIRT).", "D. Conducting regular cybersecurity training for all employees."],
+    correct: [2],
+    explanation: "Implementing a dedicated Computer Incident Response Team (CIRT) is the most effective option. A CIRT is a group of experts who respond to security incidents. They have the skills and authority to respond quickly and effectively to security incidents, minimizing the impact and preventing further damage. This team would also be responsible for monitoring the company's network for signs of a breach, allowing them to detect and respond to incidents more quickly in the future.\n\nHiring an external cybersecurity firm to conduct regular penetration testing is a good practice, but it is not sufficient on its own. Penetration testing can identify vulnerabilities, but it does not provide continuous monitoring or incident response capabilities.\n\nIncreasing the budget for the IT department to purchase more advanced security software can be helpful, but software alone cannot fully protect a company from data breaches. Effective security requires a combination of technology, processes, and people.\n\nConducting regular cybersecurity training for all employees is important, but it is not enough to prevent and detect data breaches. Employees can help prevent breaches by following good security practices, but they cannot be expected to have the specialized skills needed to detect and respond to sophisticated attacks."
+  },
+  {
+    question: "Question 10\n\nWhich of the following are often identified as the three main goals of security? (Select three.)",
+    options: ["A. Assets", "B. Integrity", "C. Policies", "D. Confidentiality", "E. Non-repudiation", "F. Employees", "G. Availability"],
+    correct: [1, 3, 6], // B, D, G
+    explanation: "The acronym CIA refers to confidentiality, integrity, and availability in respect to security. These are often identified as the three main goals of any security-oriented task.\n\nNon-repudiation provides validation of a message's origin.\n\nPolicies are the rules an organization implements to protect information.\n\nEmployees can be the most overlooked, yet most dangerous, threat agent because they have greater access to information assets than anyone on the outside trying to break in.\n\nAn asset is something that has value to a person or organization, such as sensitive information in a database."
+  }
+];
+
+let currentIdx = 0;
+let userScore = 0;
+let selectedIndices = [];
+let isChecked = false;
+
+function loadQuestion() {
+  const q = quizData[currentIdx];
+  isChecked = false;
+  selectedIndices = [];
+  
+  document.getElementById("question-text").innerText = q.question;
+  document.getElementById("explanation-box").style.display = "none";
+  
+  const btn = document.getElementById("action-btn");
+  btn.innerText = "Check Answer";
+  btn.disabled = true;
+
+  const container = document.getElementById("options-container");
+  container.innerHTML = "";
+
+  q.options.forEach((optText, i) => {
+    const card = document.createElement("div");
+    card.className = "option-card";
+    card.onclick = () => selectOption(i);
+    card.innerHTML = `
+      <div class="checkbox-indicator" id="check-${i}"></div>
+      <div>${optText}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selectOption(index) {
+  if (isChecked) return;
+
+  const q = quizData[currentIdx];
+  const isMulti = q.correct.length > 1;
+
+  if (isMulti) {
+    if (selectedIndices.includes(index)) {
+      selectedIndices = selectedIndices.filter(i => i !== index);
+    } else {
+      selectedIndices.push(index);
+    }
+  } else {
+    selectedIndices = [index];
+  }
+
+  const cards = document.querySelectorAll(".option-card");
+  cards.forEach((card, i) => {
+    const check = document.getElementById(`check-${i}`);
+    if (selectedIndices.includes(i)) {
+      card.classList.add("selected");
+      check.innerText = "✓";
+    } else {
+      card.classList.remove("selected");
+      check.innerText = "";
+    }
+  });
+
+  document.getElementById("action-btn").disabled = selectedIndices.length === 0;
+}
+
+function handleAction() {
+  if (!isChecked) {
+    checkAnswer();
+  } else {
+    currentIdx++;
+    if (currentIdx < quizData.length) {
+      loadQuestion();
+    } else {
+      showFinalResults();
+    }
+  }
+}
+
+function checkAnswer() {
+  isChecked = true;
+  const q = quizData[currentIdx];
+  const cards = document.querySelectorAll(".option-card");
+  
+  const isCorrect = 
+    selectedIndices.length === q.correct.length &&
+    selectedIndices.every(val => q.correct.includes(val));
+
+  if (isCorrect) {
+    userScore++;
+    document.getElementById("score-display").innerText = `Score: ${userScore}`;
+    document.getElementById("status-title").innerText = "CORRECT";
+    document.getElementById("status-title").style.color = "var(--accent-green)";
+  } else {
+    document.getElementById("status-title").innerText = "INCORRECT";
+    document.getElementById("status-title").style.color = "var(--accent-red)";
+  }
+
+  cards.forEach((card, i) => {
+    card.classList.add("disabled");
+    if (q.correct.includes(i)) {
+      card.classList.add("correct");
+    } else if (selectedIndices.includes(i)) {
+      card.classList.add("incorrect");
+    }
+  });
+
+  document.getElementById("explanation-text").innerText = q.explanation;
+  document.getElementById("explanation-box").style.display = "block";
+
+  const btn = document.getElementById("action-btn");
+  btn.innerText = currentIdx === quizData.length - 1 ? "Finish Quiz" : "Next Question";
+}
+
+function showFinalResults() {
+  document.getElementById("quiz-ui").style.display = "none";
+  document.getElementById("results-ui").style.display = "block";
+  document.getElementById("final-score-text").innerText = `${userScore} / ${quizData.length}`;
+}
+
+function restartQuiz() {
+  currentIdx = 0;
+  userScore = 0;
+  document.getElementById("score-display").innerText = "Score: 0";
+  document.getElementById("results-ui").style.display = "none";
+  document.getElementById("quiz-ui").style.display = "block";
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
