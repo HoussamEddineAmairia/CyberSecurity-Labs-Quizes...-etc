@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1-Security Introduction Quiz</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300f3ff'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8Mess9z'/></svg>" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="quiz-container">
+  <div id="quiz-ui">
+    <div class="quiz-header">
+      <div class="terminal-title">&gt; 1-Security Introduction Quiz</div>
+      <div class="score-badge" id="score-display">Score: 0</div>
+    </div>
+
+    <div class="question-box">
+      <div class="question-title" id="question-text">Loading question...</div>
+      <div class="options-grid" id="options-container"></div>
+    </div>
+
+    <div class="explanation-box" id="explanation-box">
+      <div class="explanation-header" id="status-title">Explanation</div>
+      <div class="explanation-text" id="explanation-text"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="action-btn" onclick="handleAction()">Check Answer</button>
+    </div>
+  </div>
+
+  <div id="results-ui" class="results-screen" style="display: none;">
+    <div class="results-title">ASSESSMENT COMPLETE</div>
+    <p style="color: var(--text-dim);">Your Final Score:</p>
+    <div class="final-score" id="final-score-text">0 / 10</div>
+    <button class="btn btn-primary" onclick="restartQuiz()">Retake Quiz</button>
+  </div>
+
+  <footer class="author-footer">
+    Created by: <span>Houssam Eddine Amairia</span>
+  </footer>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
