@@ -1,8 +1,8 @@
 <div align="center">
 
-  <h1>🛡️ 1-Security Introduction Quiz</h1>
+  <h1>🛡️ 2-Security Controls Quiz</h1>
 
-  <p>An interactive  web application designed to evaluate core cybersecurity Introduction</p>
+  <p>An interactive  web application designed to evaluate core cybersecurity Controls</p>
 
   <br />
 
